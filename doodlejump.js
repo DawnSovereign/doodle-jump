@@ -24,9 +24,9 @@ let doodler = {
 
 // game physics
 let velocityX = 0; 
-let velocityY = -2; //jump speed
-let initialVelocityY = -5.5; //starting velocity Y
-let gravity = 0.07;
+let velocityY = -1.8; //jump speed
+let initialVelocityY = -5.0; //starting velocity Y
+let gravity = 0.08;
 
 
 //platforms
@@ -65,7 +65,7 @@ window.onload = function(){
     platformImg.src = "./platform.png";
 
     
-    velocityY = initialVelocityY;
+    // velocityY = initialVelocityY;
     placePlatforms();
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodler);
