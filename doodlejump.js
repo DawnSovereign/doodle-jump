@@ -24,8 +24,8 @@ let doodler = {
 
 // game physics
 let velocityX = 0; 
-let velocityY = -1.8; //jump speed
-let initialVelocityY = -5.0; //starting velocity Y
+let velocityY = -1.5; //jump speed
+let initialVelocityY = -4.0; //starting velocity Y
 let gravity = 0.08;
 
 
@@ -36,6 +36,7 @@ let platformHeight = 18;
 let platformImg;
 
 let score = 0;
+let maxScore = 0;
 
 
 // Function to execute when the window loads
@@ -197,5 +198,13 @@ function detectCollision(a, b){
 
 function updateScore(){
     let points = Math.floor(50*Math.random());//(0-1)*50 --> (0-50)
-    score += points;
+    if(velocityY < 0){//negative going up
+        maxScore += points;
+        if(score < maxScore){
+            score = maxScore;
+        }
+    }
+    else if(velocityY >= 0){
+        maxScore -= points;
+    }
 }
