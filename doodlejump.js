@@ -37,6 +37,7 @@ let platformImg;
 
 let score = 0;
 let maxScore = 0;
+let gameOver = false;
 
 
 // Function to execute when the window loads
@@ -66,7 +67,7 @@ window.onload = function(){
     platformImg.src = "./platform.png";
 
     
-    // velocityY = initialVelocityY;
+    velocityY = initialVelocityY;
     placePlatforms();
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveDoodler);
@@ -76,12 +77,15 @@ window.onload = function(){
 function update(){
     // Request animation frame to update the game continuously
     requestAnimationFrame(update);
+    if(gameOver){
+        return;
+    }
+
     // Clear the canvas for drawing new frames
     context.clearRect(0, 0, board.width, board.height);
 
     // Update doodler's position based on velocity
     doodler.x += velocityX;
-
     // Wrap doodler around the screen horizontally
     if(doodler.x > boardWidth){
         doodler.x = 0;
@@ -93,15 +97,12 @@ function update(){
     velocityY += gravity;
     doodler.y += velocityY;
 
-    // Draw the doodler on the canvas
-    context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height);
-
-    //clear platforms
-    while(platformArray.length > 0 && platformArray[0].y >= boardHeight){
-        platformArray.shift(); //removes first element in array 
-        newPlatform();
+    if(doodler.y > boardHeight){
+        gameOver = true;
     }
 
+    // Draw the doodler on the canvas
+    context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height);
 
     //platforms
     for(i = 0; i < platformArray.length; i++){
@@ -116,11 +117,21 @@ function update(){
         context.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height);
     }
 
+        //clear platforms
+    while(platformArray.length > 0 && platformArray[0].y >= boardHeight){
+        platformArray.shift(); //removes first element in array 
+        newPlatform();
+    }
+
         //score
         updateScore();
         context.fillStyle = "black";
         context.font = "16px sans-serif";
         context.fillText(score, 5, 20);
+
+        if(gameOver){
+            context.fillText("GAME OVER: PRESS 'SPACE' TO RESTART", boardWidth/7, boardHeight*7/8);
+        }
 
 }
 
@@ -133,6 +144,23 @@ function moveDoodler(e){
     else if(e.code == "ArrowLeft" || e.code == "KeyA"){ 
         velocityX = -1.5; 
         doodler.img = doodlerLeftImg; 
+    }
+    else if(e.code == "Space" && gameOver){
+        //reset
+        doodler = {
+            img : doodlerRightImg, // Image object for the doodler
+            x : doodlerX, 
+            y : doodlerY, 
+            width : doodlerWidth, 
+            height : doodlerHeight 
+        }
+
+        velocityX = 0;
+        velocityY = initialVelocityY;
+        score = 0;
+        maxScore = 0;
+        gameOver = false;
+        placePlatforms();
     }
 }
 
